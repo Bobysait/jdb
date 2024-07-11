@@ -2,51 +2,48 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 import './Slider.css'
 
-const Slider = ({ images }) => {
-  const [imagesIndex, setimagesIndex] = useState(0)
+const Slider = ({ defaultIndex = 0, images }) => {
+    const [index, setIndex] = useState(Math.min(defaultIndex, images.length-1))
 
-  const goToPrev = () => {
-    const isFirstSlide = imagesIndex === 0
-    const newIndex = isFirstSlide ? images.length - 1 : imagesIndex - 1
-    setimagesIndex(newIndex)
-  }
+    const goToPrev = () => {
+        setIndex(index === 0 ? images.length - 1 : index - 1)
+    }
 
-  const goToNext = () => {
-    const isLastSlide = imagesIndex === images.length - 1
-    const newIndex = isLastSlide ? 0 : imagesIndex + 1
-    setimagesIndex(newIndex)
-  }
+    const goToNext = () => {
+        setIndex(index === images.length - 1 ? 0 : index + 1)
+    }
 
-  if (images.length < 1) {
-    return null
-  }
+    if (images.length < 1 || !images[index]) { return null }
 
-  return (
-    <div className="slider-container">
-      <img
-        src={images[imagesIndex]}
-        alt="alt texte"
-        className="slider__image"
-      />
-      <span
-        className="slider__arrow--left fas fa-chevron-left"
-        onClick={goToPrev}
-      ></span>
-      <span
-        className="slider__arrow--right fas fa-chevron-right"
-        onClick={goToNext}
-      ></span>
-      {images.length > 0 && (
-        <span className="slider__index">
-          {imagesIndex + 1} / {images.length}
-        </span>
-      )}
-    </div>
-  )
+    return (
+        <div className="slider-container">
+            <img
+                src={images[index]}
+                alt="alt texte"
+                className="slider__image"
+            />
+            {images.length > 1 && (<>
+                <span
+                    className="slider__arrow--left fas fa-chevron-left circle-shadow"
+                    onClick={goToPrev}
+                />
+                <span
+                    className="slider__arrow--right fas fa-chevron-right circle-shadow"
+                    onClick={goToNext}
+                />
+                {images.length > 0 && (
+                    <span className="slider__index">
+                        {index + 1} / {images.length}
+                    </span>
+                )}
+            </>)}
+        </div>
+    )
 }
 
 Slider.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.string).isRequired,
+    images: PropTypes.arrayOf(PropTypes.string).isRequired,
+    defaultIndex: PropTypes.number,
 }
 
 export default Slider
